@@ -17,7 +17,6 @@ dependencies = [
     "grpcio==1.66.0",
     "protobuf==5.27.2",
     "binance-futures-connector==4.0.0",
-    "numpy==1.26.4"
 ]
 [project.urls]
 homepage = "https://codetotrade.app"
