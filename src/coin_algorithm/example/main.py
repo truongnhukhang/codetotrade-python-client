@@ -6,11 +6,11 @@ sys.path.insert(0, parent_dir_path)
 
 import logging
 
-from coin_algorithm.server import binance_server
+from coin_algorithm.server import binance_server, back_test_server
 
 if __name__ == "__main__":
     logging.basicConfig(level = logging.INFO)
-    # back_test_server.serve(port='8888', bot_module='bot.my_ta_bot', bot_class='MyTABot')
+    back_test_server.serve(port='8888', bot_module='bot.my_ta_bot', bot_class='MyTABot')
     binance_server.serve(port='8888', bot_module='bot.my_simple_bot', bot_class='SimpleBot',
                          api_key='',
                          secret_key='',
