@@ -1,19 +1,20 @@
 from typing import List
 
+from coin_algorithm.domain.signal import Signal
 from coin_algorithm.domain.trade_metadata import TradeMetadata
 
 
 class TimeTravel:
-    def __init__(self, buy_sell: List[int], metadata=List[TradeMetadata]):
-        if buy_sell is None:
-            buy_sell = []
+    def __init__(self, signal: List[Signal], metadata=List[TradeMetadata]):
+        if signal is None:
+            signal = []
         if metadata is None:
             metadata = []
-        self.buy_sell = buy_sell
+        self.signal = signal
         self.metadata = metadata
 
     def to_proto_dict(self):
         return {
-            "buySell": self.buy_sell,
+            "signal": [signal.to_proto_dict() for signal in self.signal],
             "tradeMetadata": [metadata.to_proto_dict() for metadata in self.metadata],
         }

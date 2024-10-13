@@ -3,10 +3,11 @@ from coin_algorithm.domain.bar_series import BarSeries
 from coin_algorithm.domain.bot_config import BotConfig
 from coin_algorithm.domain.chart import Chart
 from coin_algorithm.domain.coin_info import CoinInfo
+from coin_algorithm.domain.signal import Signal
 from coin_algorithm.domain.time_travel import TimeTravel
 from coin_algorithm.domain.trade_metadata import TradeMetadata
 
-from typing import Dict, List
+from typing import Dict, List, Union
 
 
 class BaseBot(ABC):
@@ -46,7 +47,11 @@ class BaseBot(ABC):
         pass
 
     @abstractmethod
-    def is_close_current_position(self, idx: int) -> bool:
+    def is_close_buy_position(self, idx: int) -> bool:
+        pass
+
+    @abstractmethod
+    def is_close_sell_position(self, idx: int) -> bool:
         pass
 
     def get_chart_list(self) -> List[Chart]:
@@ -54,7 +59,7 @@ class BaseBot(ABC):
 
     @staticmethod
     def get_index_of_bar_series_by_start_time(bar_series: BarSeries, start_time: int) -> int:
-        max_len = len(bar_series.bars)-1
+        max_len = len(bar_series.bars) - 1
         min_len = 0
         while min_len <= max_len:
             mid = int(min_len + (max_len - min_len) // 2)
@@ -69,22 +74,18 @@ class BaseBot(ABC):
     def time_travel(self) -> TimeTravel:
         time_travel = TimeTravel([], [])
         bars = self.bar_series.bars
-        buysell = [0] * len(bars)
+        signal = [Signal()] * len(bars)
         metadata = [TradeMetadata()] * len(bars)
         for i in range(0, len(bars)):
+            signal[i] = Signal(bars[i].start_time, self.is_buy(i), self.is_sell(i), self.is_close_buy_position(i),
+                               self.is_close_sell_position(i))
             if self.is_buy(i):
-                buysell[i] = 1
                 metadata[i] = self.buy(i)
             elif self.is_sell(i):
-                buysell[i] = 2
                 metadata[i] = self.sell(i)
-            elif self.bot_config.is_enable_close_mode and self.is_close_current_position(i):
-                buysell[i] = 3
-                metadata[i] = TradeMetadata()
             else:
-                buysell[i] = 0
                 metadata[i] = TradeMetadata()
 
-        time_travel.buy_sell = buysell
+        time_travel.signal = signal
         time_travel.metadata = metadata
         return time_travel

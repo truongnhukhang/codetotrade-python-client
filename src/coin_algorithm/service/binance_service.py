@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import queue
@@ -202,11 +203,15 @@ class BinanceService(CoinAlgorithmServiceServicer):
         online_id = request.onlineId
         idx = request.idx
         base_bot = self.bot_map.get(online_id)
-        response = coin_service_pb2.GetSignalResponse(
+        response = coin_service_pb2.GetSignalResponse()
+        signal = coin_service_pb2.Signal(
+            time=base_bot.bar_series.bars[idx].start_time,
             isBuy=base_bot.is_buy(idx),
             isSell=base_bot.is_sell(idx),
-            isClose=base_bot.is_close_current_position(idx)
+            isCloseBuy=base_bot.is_close_buy_position(idx),
+            isCloseSell=base_bot.is_close_sell_position(idx)
         )
+        response.signal.CopyFrom(signal)
         return response
 
     def GetOrderStatus(self, request, context):
