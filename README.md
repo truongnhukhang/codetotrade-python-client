@@ -6,7 +6,7 @@ This is the `codetotrade.app` Python client, which provides tools and functional
 
 To install the client, you can use `pip`:
 ```sh
-pip install coin-algorithm==1.2
+pip install coin-algorithm==1.4
 ```
 ## Usage
 
