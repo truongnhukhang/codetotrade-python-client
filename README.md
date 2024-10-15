@@ -34,8 +34,6 @@ class MyTestBot(BaseBot):
     def sell(self, idx: int) -> TradeMetadata:
         pass
 
-    def is_close_current_position(self, idx: int) -> bool:
-        pass
 ```
 ### Run your bot
 
